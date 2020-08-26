@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "acorn": "^8.0.1",
     "monaco-editor": "^0.20.0"
   }
 }
