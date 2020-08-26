@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>canvaspad</title>
+	<style type="text/css">
+		body{
+			background-color: #efefef;
+		}
+		.page{
+		}
+		.cell{
+			padding: 10px;
+		    overflow: hidden;
+		    background: #fff;
+		    margin-bottom: 10px;
+		    border-radius: 10px;
+		    box-shadow: 0 0 10px #ccc;
+		}
+		.cell .left{
+			float: left;
+			width: 50%;
+		}
+		.cell .right{
+			float: right;
+			width: 50%;
+		}
+		.cell textarea{
+			width: 98%;
+    		height: 120px;
+    		border:none;
+		}
+		.cell textarea:focus{
+    		border:none;
+		}	
+		.center{text-align: center;}
+		.log{font-family: monospace;}
+	</style>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js"></script>
+</head>
+<body>
+
+<div class="page" data-bind="foreach: cells">
+	<div class="cell">
+		<div class="left">
+			<textarea data-bind="value: code, attr: {id: textBoxId}"></textarea>
+			<div class="toolbar"><button data-bind="click: renderCell">Run</button></div>
+
+			<div class="log" data-bind="attr: {id: cellId}"></div>
+		</div>
+		<div class="right">
+			<canvas width="430" height="200" data-bind="attr: {id: canvasId}"></canvas>
+		</div>
+	</div>
+</div>
+
+<div class="page center">
+	<button data-bind="click: addCell">Add Cell</button>
+</div>
+
+
+<script type="text/javascript">
+	function uuidv4() {
+	  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+	    return v.toString(16);
+	  });
+	}
+
+	function $(id){
+		return document.getElementById(id)
+	}
+
+	function createConsole(cellId){
+		// reset console
+		$(cellId).innerHTML = "";
+		return {
+			log: function(txt){
+				$(cellId).innerHTML += txt;
+			}
+		}
+	}
+
+	function createRenderFunc(cellCode){
+		// call the renderCell function with the cells' canvas ctx
+	  	return new Function("ctx", "console", cellCode); 
+	}
+
+
+	function Cell(code){
+		this.code = ko.observable(code);
+		this.cellId = uuidv4();
+		this.canvasId = "canvas_" + this.cellId;
+		this.textBoxId = "textbox_" + this.cellId;
+
+		this.renderCell = function(data){
+			const fnc = createRenderFunc(this.code())
+			const ctx = $(this.canvasId).getContext("2d");
+			const cons = createConsole(this.cellId);
+			fnc(ctx, cons);
+		}
+	}
+
+	function AppViewModel() {
+		this.cells = ko.observableArray([
+			new Cell("// ctx is injected\n"),
+		]);
+		
+		this.addCell = function(){
+			const newCell = new Cell("");
+			this.cells.push(newCell);
+			setTimeout(()=> $(newCell.textBoxId).focus(), 0);
+		}.bind(this)
+	}
+
+	ko.applyBindings(new AppViewModel());
+</script>
+
+</body>
+</html>
