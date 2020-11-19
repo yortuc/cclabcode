@@ -11,7 +11,6 @@ export default class Editor {
         const value = "// ctx is injected\n\nctx.fillRect(0, 0, 100, 100);\n\n";
         const language = "javascript";
 
-        // this.drawingMapper = new DrawingMapper();
         this.model = monaco.editor.createModel(value, language);
 
         this.editor = monaco.editor.create(

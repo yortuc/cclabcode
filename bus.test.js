@@ -1,5 +1,13 @@
-import bus from './bus.js'
+import bus from './bus'
 
-test('adds 1 + 2 to equal 3', () => {
-    expect(1+2).toBe(3);
+test('subscribes to a channel', () => {
+    const callback = () => {} 
+    bus.subscribe("CHANNEL", callback)
+    expect(bus.channels["CHANNEL"]).toStrictEqual([callback])
 });
+
+test('publishes a message to a channel', () => {
+    bus.subscribe("CHANNEL", (payload) => expect(payload).toBe("PAYLOAD"))
+    bus.publish("CHANNEL", "PAYLOAD")
+});
+

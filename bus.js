@@ -5,7 +5,7 @@ class Bus {
 
     subscribe(channel, callback){
         if (this.channels[channel]){
-            this.channels[channel].append(callback)
+            this.channels[channel].push(callback)
         }
         else{
             this.channels[channel] = [callback]
@@ -13,7 +13,9 @@ class Bus {
     }
 
     publish(channel, payload){
-        this.channels[channel].foreach(r => r(payload))
+        if(this.channels[channel]){
+            this.channels[channel].forEach(r => r(payload))
+        }
     }
 }
 
