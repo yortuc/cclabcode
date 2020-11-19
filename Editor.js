@@ -19,6 +19,9 @@ export default class Editor {
                 value: value,
                 language: language,
                 glyphMargin: true,
+                minimap: {
+                    enabled: false
+                }
             }
         );
 
